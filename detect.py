@@ -81,10 +81,6 @@ class NudenyDetect:
                 break
             index += 1
 
-        extension = os.path.splitext(filename)[1]
-        if extension == '':
-            filename = filename + ".jpg"
-
         new_filename = str(uuid.uuid4()) + "-" + filename
         cv2.imwrite(os.path.join('./static', new_filename),
                     image_with_detections)
@@ -110,8 +106,8 @@ class NudenyDetect:
                 right = detections['detection_boxes'][index][3] * width
                 left = detections['detection_boxes'][index][1] * width
 
-                start_point = (int(left), int(top))
-                end_point = (int(right), int(bottom))
+                start_point = (int(left) - 20, int(top) - 20)
+                end_point = (int(right) + 20, int(bottom) + 20)
                 censored_image = cv2.rectangle(
                     censored_image, start_point, end_point, (0, 0, 0), -1)
 
@@ -122,10 +118,6 @@ class NudenyDetect:
             else:
                 break
             index += 1
-
-        extension = os.path.splitext(filename)[1]
-        if extension == '':
-            filename = filename + ".jpg"
 
         new_filename = str(uuid.uuid4()) + "-" + filename
         cv2.imwrite(os.path.join('./static', new_filename), censored_image)
