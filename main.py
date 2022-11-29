@@ -26,6 +26,9 @@ class Image(BaseModel):
 async def create_upload_files(files: list[UploadFile]):
     return {"predictions": [classification_model.classify(await file.read(), file.filename) for file in files]}
 
+@app.post("/classifyUrl/")
+async def create_upload_files(images: List[Image]):
+    return {"predictions": [classification_model.classify(urlopen(image.url).read(), image.filename) for image in images]}
 
 @app.post("/draw_bounding_box/")
 async def create_upload_files(files: list[UploadFile]):
