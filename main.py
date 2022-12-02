@@ -5,7 +5,7 @@ from fastapi.staticfiles import StaticFiles
 
 from typing import List
 from pydantic import BaseModel
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 
 from classify import NudenyClassify
 from detect import NudenyDetect
@@ -16,6 +16,7 @@ detection_model = NudenyDetect()
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+headers = {'User-Agent':'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'}
 
 class Image(BaseModel):
     filename: str
@@ -28,7 +29,7 @@ async def create_upload_files(files: list[UploadFile]):
 
 @app.post("/classifyUrl/")
 async def create_upload_files(images: List[Image]):
-    return {"predictions": [classification_model.classify(urlopen(image.url).read(), image.filename) for image in images]}
+    return {"predictions": [classification_model.classify(urlopen(Request(image.url, headers=headers)).read(), image.filename) for image in images]}
 
 @app.post("/draw_bounding_box/")
 async def create_upload_files(files: list[UploadFile]):
@@ -37,7 +38,7 @@ async def create_upload_files(files: list[UploadFile]):
 
 @app.post("/draw_bounding_boxUrl/")
 async def create_upload_files(images: List[Image]):
-    return {"predictions": [detection_model.draw_bounding_box(urlopen(image.url).read(), image.filename) for image in images]}
+    return {"predictions": [detection_model.draw_bounding_box(urlopen(Request(image.url, headers=headers)).read(), image.filename) for image in images]}
 
 
 @app.post("/censor/")
@@ -47,4 +48,4 @@ async def create_upload_files(files: list[UploadFile]):
 
 @app.post("/censorUrl/")
 async def create_upload_files(images: List[Image]):
-    return {"predictions": [detection_model.censor_exposed_part(urlopen(image.url).read(), image.filename) for image in images]}
+    return {"predictions": [detection_model.censor_exposed_part(urlopen(Request(image.url, headers=headers)).read(), image.filename) for image in images]}

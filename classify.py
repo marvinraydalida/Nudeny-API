@@ -27,8 +27,8 @@ class NudenyClassify:
         prediction = tf.where(prediction < 0.5, 0, 1)
         prediction.numpy()
         if prediction[0] == 1:
-            return {filename : "safe"}
+            return {"filename" : filename, "class": "safe"}
         else:
-            return {filename : "nude"}
+            return {"filename" : filename, "class": "nude"}
     
         
